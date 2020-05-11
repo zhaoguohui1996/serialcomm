@@ -1,13 +1,12 @@
-package Controller;
+package demo;
 
-import lombok.extern.slf4j.Slf4j;
 import serialcomm.CrcUtil;
+import serialcomm.HexUtils;
 import serialcomm.ParamConfig;
 import serialcomm.SerialPortUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @program: serialcomm
@@ -15,7 +14,7 @@ import java.util.List;
  * @author: zgh
  * @create: 2020-05-11 10:34
  **/
-public class Test {
+public class WindSpeedTest {
 
     public static void main(String[] args) throws InterruptedException {
         /** 串口号 */
@@ -30,9 +29,9 @@ public class Test {
         int stopBit = 1;
 
         String cmd = "01 03 00 16 00 01";
-        byte[] bytes = hexStringToByte(cmd);
+        byte[] bytes = HexUtils.hexStringToByte(cmd);
         int crc16 = CrcUtil.calcCrc16(bytes);
-        String s = changeHighAndLow(Integer.toHexString(crc16));
+        String s = HexUtils.changeHighAndLow(Integer.toHexString(crc16));
         System.out.println(s);
         cmd += s;
 
@@ -56,14 +55,14 @@ public class Test {
             System.out.println("返回结果:" + dataHex);
             String rcrc = dataHex.substring(dataHex.length() - 4);
             String data = dataHex.substring(0, dataHex.length() - 4);
-            byte[] rbytes = hexStringToByte(data);
+            byte[] rbytes = HexUtils.hexStringToByte(data);
             int rcrc16 = CrcUtil.calcCrc16(rbytes);
-            String s1 = changeHighAndLow(Integer.toHexString(rcrc16));
+            String s1 = HexUtils.changeHighAndLow(Integer.toHexString(rcrc16));
             System.out.println(s1);
             if (s1.replace(" ", "").equalsIgnoreCase(rcrc)) {
                 System.out.println("校验成功");
                 String validWords = dataHex.substring(4, 6);
-                int validNumber = hexStringToByte(validWords)[0];
+                int validNumber = HexUtils.hexStringToByte(validWords)[0];
                 System.out.println("有效数字为:" + validNumber);
                 String dataLength = dataHex.substring(6, 6 + validNumber * 2);
                 System.out.println(dataLength);
@@ -74,53 +73,5 @@ public class Test {
         }
     }
 
-    /**
-     * 十六进制字符串转字节数组
-     *
-     * @param hexString:
-     * @return byte[]:
-     * @author : cgl
-     * @version : 1.0
-     * @since 2020/4/15 14:52
-     **/
-    static byte[] hexStringToByte(String hexString) {
-        if (hexString == null || hexString.equals("")) {
-            return null;
-        }
-        hexString = hexString.replace(" ", "").toUpperCase();
-        int length = hexString.length() / 2;
-        char[] hexChars = hexString.toCharArray();
-        byte[] d = new byte[length];
-        for (int i = 0; i < length; i++) {
-            int pos = i * 2;
-            d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
-        }
-        return d;
-    }
-
-    /**
-     * 字符转为字节
-     *
-     * @param c:
-     * @return byte:
-     * @author : cgl
-     * @version : 1.0
-     * @since 2020/4/15 14:53
-     **/
-    private static byte charToByte(char c) {
-        return (byte) "0123456789ABCDEF".indexOf(c);
-    }
-
-    private static String changeHighAndLow(String crc) {
-        LinkedList linkedList = new LinkedList();
-        for (int i = 0; i < crc.length(); i += 2) {
-            String s1 = crc.substring(i, i + 2);
-            linkedList.add(s1);
-        }
-        // 反转lists
-        Collections.reverse(linkedList);
-        String string = linkedList.toString();
-        return string.substring(1, string.length() - 1).replace(",", "");
-    }
 
 }

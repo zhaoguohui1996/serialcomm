@@ -57,6 +57,9 @@ public class HexUtils {
      *@return   {@link String}
      */
     public static String changeHighAndLow(String crc) {
+        if(crc.length()%2!=0){
+            crc="0"+crc;
+        }
         LinkedList linkedList = new LinkedList();
         for (int i = 0; i < crc.length(); i += 2) {
             String s1 = crc.substring(i, i + 2);

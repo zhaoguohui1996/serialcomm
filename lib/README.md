@@ -1,0 +1,1 @@
+将rxtxParallel.dll和rxtxSerial.dll放到C:\Windows\System32目录

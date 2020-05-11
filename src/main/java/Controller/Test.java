@@ -17,7 +17,9 @@ public class Test {
         String cmd="01 03 00 16 00 01 65 CE";
         // 实例化串口操作类对象
         SerialPortUtils serialPort = new SerialPortUtils();
+        String serialNumber="";
         ParamConfig paramConfig = new ParamConfig("COM3", 9600, 0, 8, 1);
+
     }
 
 }
